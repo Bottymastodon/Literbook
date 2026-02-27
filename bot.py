@@ -9,7 +9,7 @@ def run_bot():
     # Conectamos con Mastodon
     mastodon = Mastodon(access_token=TOKEN, api_base_url=INSTANCE_URL)
     
-    tags = ['books', 'writing', 'literature']
+    tags = ['books', 'writing', 'literature', 'libros', 'literatura', 'escribir', 'cuento']
     
     for tag in tags:
         print(f"Buscando posts con #{tag}...")
@@ -21,6 +21,7 @@ def run_bot():
                     try:
                         mastodon.status_reblog(post['id'])
                         print(f"✅ Boost exitoso en #{tag}")
+                        time.sleep(1) # <--- Esto hace que el bot respire 1 segundo entre cada boost
                     except:
                         pass
         except Exception as e:

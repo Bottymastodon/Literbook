@@ -14,7 +14,7 @@ def run_bot():
     for tag in tags:
         print(f"Buscando posts con #{tag}...")
         try:
-            posts = mastodon.timeline_hashtag(tag, limit=10)
+            posts = mastodon.timeline_hashtag(tag, limit=40)
             for post in posts:
                 # Solo boost si no es respuesta y no es un reblog
                 if post['in_reply_to_id'] is None and post['reblog'] is None:

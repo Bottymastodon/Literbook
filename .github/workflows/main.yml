@@ -2,25 +2,49 @@ name: Literbook Booster Bot
 
 on:
   schedule:
-    - cron: '*/15 * * * *' # Se ejecuta cada 15 minutos
-  workflow_dispatch:      # Permite ejecutarlo a mano para probar
+    - cron: '*/30 * * * *'   # Cada 30 minutos
+  workflow_dispatch:          # Ejecución manual para probar
+
+# Permisos para que el bot pueda commitear el archivo de estado de vuelta
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
     steps:
       - name: Checkout del código
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configurar Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.11'
+          cache: 'pip'
 
-      - name: Instalar librerías
+      - name: Instalar dependencias
         run: pip install Mastodon.py
 
       - name: Ejecutar el Bot
         env:
-          MASTODON_TOKEN: ${{ secrets.MASTODON_TOKENS }}
+          MASTODON_TOKENS: ${{ secrets.MASTODON_TOKENS }}
         run: python bot.py
+
+      - name: Guardar estado (IDs boosteados) de vuelta al repo
+        if: always()
+        run: |
+          if [ -f boosted_ids.json ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add boosted_ids.json
+            if ! git diff --staged --quiet; then
+              git commit -m "chore: actualizar IDs boosteados [skip ci]"
+              git push
+            else
+              echo "Sin cambios en boosted_ids.json"
+            fi
+          else
+            echo "No existe boosted_ids.json, nada que guardar."
+          fi

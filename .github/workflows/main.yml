@@ -2,10 +2,9 @@ name: Literbook Booster Bot
 
 on:
   schedule:
-    - cron: '*/30 * * * *'   # Cada 30 minutos
-  workflow_dispatch:          # Ejecución manual para probar
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
 
-# Permisos para que el bot pueda commitear el archivo de estado de vuelta
 permissions:
   contents: write
 
@@ -22,14 +21,15 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
+          cache: 'pip'          # ← ahora SÍ funciona, hay requirements.txt
 
       - name: Instalar dependencias
-        run: pip install Mastodon.py
+        run: pip install -r requirements.txt
 
       - name: Ejecutar el Bot
         env:
           MASTODON_TOKENS: ${{ secrets.MASTODON_TOKENS }}
+          PYTHONUNBUFFERED: "1"
         run: python bot.py
 
       - name: Guardar estado (IDs boosteados) de vuelta al repo

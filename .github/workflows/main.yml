@@ -2,16 +2,16 @@ name: Literbook Booster Bot
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
-  workflow_dispatch:
+    - cron: '*/30 * * * *'   # cada 30 minutos
+  workflow_dispatch:          # ejecución manual para probar
 
 permissions:
-  contents: write
+  contents: write             # necesario para commitear boosted_ids.json
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout del código
@@ -21,10 +21,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'          # ← ahora SÍ funciona, hay requirements.txt
 
       - name: Instalar dependencias
-        run: pip install -r requirements.txt
+        run: pip install Mastodon.py
 
       - name: Ejecutar el Bot
         env:
